@@ -19,8 +19,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 // ============================================
 // TYPE DEFINITIONS - TABEL NEWS (BERITA)
 // ============================================
