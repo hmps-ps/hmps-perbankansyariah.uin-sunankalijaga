@@ -1738,7 +1738,7 @@ const AdminDashboard = () => {
             <DialogTitle>{editingMember ? "Edit Anggota" : "Tambah Anggota"}</DialogTitle>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto px-6">
-            <form onSubmit={handleMemberSubmit} className="space-y-4 pb-4">
+            <form data-member-form onSubmit={handleMemberSubmit} className="space-y-4 pb-4">
               <div>
                 <Label>Nama</Label>
                 <Input value={memberForm.name} onChange={(e) => setMemberForm({ ...memberForm, name: e.target.value })} required />
@@ -1747,14 +1747,24 @@ const AdminDashboard = () => {
                 <Label>Foto Member</Label>
                 <div className="space-y-2">
                   <div className="flex gap-2">
-                    <Input 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={handleMemberPhotoUpload} 
+                    <input
+                      id="member-photo-input"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleMemberPhotoUpload}
                       disabled={uploadingMember}
+                      className="hidden"
                     />
-                    <Button type="button" variant="outline" disabled={uploadingMember}>
-                      {uploadingMember ? "Uploading..." : "Upload"}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={uploadingMember}
+                      onClick={() => {
+                        const inp = document.getElementById('member-photo-input') as HTMLInputElement | null;
+                        inp?.click();
+                      }}
+                    >
+                      {uploadingMember ? 'Uploading...' : 'Upload'}
                     </Button>
                   </div>
                   {memberForm.photo_url && (
@@ -1813,14 +1823,20 @@ const AdminDashboard = () => {
             </form>
           </div>
           <div className="flex-shrink-0 border-t pt-4 px-6">
-            <Button 
+            <Button
               onClick={() => {
-                const form = document.querySelector('form[data-member-form]');
-                if (form) form.dispatchEvent(new Event('submit', { bubbles: true }));
+                const form = document.querySelector('form[data-member-form]') as HTMLFormElement | null;
+                if (form) {
+                  if (typeof (form as any).requestSubmit === 'function') {
+                    (form as any).requestSubmit();
+                  } else {
+                    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                  }
+                }
               }}
               className="w-full"
             >
-              {editingMember ? "Update" : "Tambah"}
+              {editingMember ? 'Update' : 'Tambah'}
             </Button>
           </div>
         </DialogContent>
